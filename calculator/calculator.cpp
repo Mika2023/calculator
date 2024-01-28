@@ -64,7 +64,7 @@ void polish_cow(char* expression)//эта функция принимает ст
         {
           double number = 0;
           if (expression[i] == 'e' || expression[i] == 'E') number = exp(1);
-          else if (expression[i] == 'p' || expression[i] == 'P') number = M_PI;
+          else if (expression[i] == 'p' || expression[i] == 'P') number = acos(-1);
           //это число либо е, либо пи, либо вводимое пользователем
           polish[a++] = expression[i];
           f = 0;
