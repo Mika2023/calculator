@@ -54,109 +54,143 @@ int priority(char sign)
 
 void polish_cow(char* expression)//эта функция принимает строку с выражением (не надо) и преобразует в польскую нотацию (строку)
 {//надо заменить входную строку на чтение с потока ввода
-//может, польская нотация не нужна в виде строки именно...
     char polish[1000] = { 0 };
     int len = strlen(expression);
-    int a = 0, f = 1;//флаг для унарного минуса (когда надо считать отрицательное число): 1 - минус унарный, 0 - обычный
+    int a = 0;
     Stack signs;
-    for (int i = 0; i < len; ++i) {
-        if (expression[i] >= '0' && expression[i] <= '9' || expression[i]=='-' && f || expression[i] == 'e' || expression[i] == 'E' || expression[i]=='p' || expression[i]=='P')
-        {
-          double number = 0;
-          if (expression[i] == 'e' || expression[i] == 'E') number = exp(1);
-          else if (expression[i] == 'p' || expression[i] == 'P') number = acos(-1);
-          //это число либо е, либо пи, либо вводимое пользователем
-          polish[a++] = expression[i];
-          f = 0;
-        }
-        else {
-            if (a > 0 && polish[a - 1] != ' ') polish[a++] = ' ';
-            if (expression[i] == '(')
-            {
-              signs.push('(');
-              f = 1;
-            }
-            else if (expression[i] == ')')
-            {
-                while (signs.get_top() != -1000000000 && signs.get_top() != '(')
-                {
-                    polish[a++] = signs.pop();
-                    polish[a++] = ' ';
-                }
-                if (signs.get_top() == '(') signs.pop();
-            }
-            else
-            {
-                int prior = priority(expression[i]);
-                while (!signs.is_empty() && priority(signs.get_top()) >= prior && signs.get_top() != '(')
-                {
-                    polish[a++] = signs.pop();
-                    polish[a++] = ' ';
-                }
-                signs.push(expression[i]);
-            }
-        }
-    }
-    if (a > 0 && polish[a - 1] != ' ') polish[a++] = ' ';
-    while (signs.get_top() != -1000000000)
-    {
-        polish[a++] = signs.pop();
-        polish[a++] = ' ';
-    }
-  
-    int res = 0;
-    Stack nums;
-    int i = 0;
-    while (i < a)
-    {
-        if (polish[i] == ' ')
-        {
-            ++i;
-            continue;
-        }
-        if (polish[i] >= '0' && polish[i] <= '9')
-        {
-            int num = 0;
-            while (polish[i] >= '0' && polish[i] <= '9') num = num * 10 + polish[i++] - '0';
-            nums.push(num);
-            continue;
-        }
-        switch (polish[i])
-        {
-        case '+':
-            res = nums.pop() + nums.pop();
-            break;
-        case '-':
-            res = -(nums.pop() - nums.pop());
-            break;
-        case '^':
-            res = pow(nums.pop(), nums.pop());
-            break;
-          case 's':
-              res = sin(nums.pop());
-              break;
-          case 'c':
-              res = cos(nums.pop());
-              break;
-          case 't':
-              res = tan(nums.pop());
-              break;
-          case 'l':
-              res = log(nums.pop());
-              break;
-        case '*':
-            res = nums.pop() * nums.pop();
-            break;
-        case '/':
-            int n1 = nums.pop(), n2 = nums.pop();
-            res = n2 / n1;
-            break;
-        
-        }
-        nums.push(res);
-        ++i;
-    }
-    cout << nums.get_top();
+
+    char current_symbol;
+current_symbol = cin.peek();
+double number = 0;
+//cout << current_symbol;    print current symbol
+// для стеков создадим свой заголовочный файл?
+
+while (1)// will it stops then the file ends?
+{
+	if (current_symbol >= '0' && current_symbol <= '9') // read a number
+	{
+		cin >> number; //		TO DO: reading from the file
+		string stNumber = to_string(number); // convert to string; need to work with polish notation
+		int number_length = stNumber.length(); 
+		int number_iterator = 0;
+		while (number_length)
+		{
+			polish[a++] = stNumber[number_iterator++];
+		}
+		polish[a++] = ' '; // separate from the next number
+		continue;
+	}
+
+	if (current_symbol == '(')
+	{
+		signs.push('(');
+		cin.ignore();
+	}
+	else if (current_symbol == ')')
+	{
+		while (signs.get_top() != -1000000000 && signs.get_top() != '(')
+		{
+			polish[a++] = signs.pop();
+			polish[a++] = ' ';
+		}
+		if (signs.get_top() == '(')
+		{
+			signs.pop();
+		}
+		cin.ignore();
+	}
+	else
+	{
+		int prior = priority(current_symbol); //		TO DO:  в строке: sin; мы считали s, определили приоритет, 
+		//запушили и должны пропустить следующие несколько символов, чтобы не пушить просто буквы
+		while (!signs.is_empty() && priority(signs.get_top()) >= prior && signs.get_top() != '(')
+		{
+			polish[a++] = signs.pop();
+			polish[a++] = ' ';
+		}
+		signs.push(current_symbol); // или priority вернет 0, и если (!priority) то символ не пушим
+
+		//супер пупер костыль: для того чтобы различить котангенс, мы можем прочитать строку из файла,
+		// заменить все подстроки "cot" на подстроку "C" и перезаписать файл. 
+		// или вообще все тригонометрические функции заменить на символы, тогда будет легче с ними работать (пушить в стек с операциями)
+		cin.ignore();
+	}
+}
+
+
+double res = 0;
+Stack nums;
+int i = 0;
+while (i < a)
+{
+	if (polish[i] == ' ')
+	{
+		++i;
+		continue;
+	}
+	if (polish[i] >= '0' && polish[i] <= '9') // positive number
+	{
+		string numberPolish = "";
+		while (polish[i] >= '0' && polish[i] <= '9' || polish[i] == '.')
+		{
+			numberPolish += polish[i++];
+		}
+		double num = 0;
+		num = stod(numberPolish); // convert from string to double
+		nums.push(num);
+		continue;
+	}
+	else if (i + 1 < a && polish[i] == '-' && polish[i + 1] >= '0' && polish[i] <= '9') // negative number
+	{
+		i++; // skip the current "-". case "-" will be ignored
+		string numberPolish = "";
+		while (polish[i] >= '0' && polish[i] <= '9' || polish[i] == '.')
+		{
+			numberPolish += polish[i++];
+		}
+		double num = 0;
+		num = stod(numberPolish);
+		num = -1 * num; // make the number negative
+		nums.push(num);
+		continue;
+	}
+	switch (polish[i])
+	{
+	case '+':
+		res = nums.pop() + nums.pop();
+		break;
+	case '-':
+		res = -(nums.pop() - nums.pop());
+		break;
+	case '^':
+		res = pow(nums.pop(), nums.pop());
+		break;
+	case 's':
+		res = sin(nums.pop());
+		break;
+	case 'c':
+		res = cos(nums.pop());
+		break;
+	case 't':
+		res = tan(nums.pop());
+		break;
+	case 'l':
+		double n1 = nums.pop(), n2 = nums.pop(); // n2 - основание, n1 - число 
+		res = log(n1) / log(n2); // логарифм по основанию b от числа a == натуральный логарифм (a) / натуральный логарифм (b). 
+		//Для вычисления логарифма нужно обработать два числа, log(x) вычисляет натуральный логарифм
+		break;
+	case '*':
+		res = nums.pop() * nums.pop();
+		break;
+	case '/':
+		double n1 = nums.pop(), n2 = nums.pop();
+		res = n2 / n1;
+		break;
+
+	}
+	nums.push(res);
+	++i;
+}
 }
 
 int main()
