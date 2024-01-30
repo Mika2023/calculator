@@ -1,0 +1,54 @@
+﻿<Page x:Class="calculator_visual.Param"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:calculator_visual"
+      mc:Ignorable="d" 
+      d:DesignHeight="449.04" d:DesignWidth="385"
+      Title="Param">
+
+    <Grid Margin="0,0,10,10">
+        <ListBox x:Name="paramlist" Margin="10,89,13,71" FontSize="24">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="227">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding name}"  FontSize="30" TextAlignment="Left" FontFamily="Bahnschrift" Background="White" Foreground="#FF2D1065"/>
+                        <TextBlock Text="{Binding value}" Grid.Column="1" FontSize="30" TextAlignment="Left" FontFamily="Bahnschrift" Background="White" Foreground="#FF2D1065"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="6"/>
+                </Style>
+            </ListBox.Resources>
+        </ListBox>
+        <Button Content="Добавить" BorderThickness="2" Margin="84,386,0,0" Height="53" Width="204" Background="#FF5F309C" TextBlock.Foreground="White" FontSize="30" BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center" Click="Button_Click">
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="6"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <TextBox x:Name="ValuePar" HorizontalAlignment="Left" Margin="142,10,0,377" Padding="5,7,0,0" FontSize="30" TextAlignment="Left" FontFamily="Bahnschrift" Background="White" BorderBrush="{x:Null}" Foreground="#FF2D1065" Width="220" TextWrapping="Wrap" Height="49">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="6"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <TextBox x:Name="NamePar" HorizontalAlignment="Left" Margin="10,10,0,378" Padding="0,7,5,0" TextWrapping="Wrap" FontSize="30" TextAlignment="Right" FontFamily="Bahnschrift" Background="White" BorderBrush="{x:Null}" Foreground="#FF2D1065" Width="81">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="6"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <TextBlock HorizontalAlignment="Left" Margin="91,17,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="36" Width="51" FontFamily="Bahnschrift" Foreground="#FF2D1065" FontSize="30" Text="=" TextAlignment="Center"/>
+    </Grid>
+</Page>
