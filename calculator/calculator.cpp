@@ -5,27 +5,6 @@
 using namespace std;
 
 
-int brackets(const char polish[])
-{
-	int i = 0;
-	int open = 0;
-	while (polish[i])
-	{
-		if (polish[i] == 40)
-			open = open + 1;
-		else
-			open = open - 1;
-
-		if (open < 0)
-			break;
-
-		i++;
-	}
-	if (open == 0)
-		return 1;
-	else
-		return 0;
-}
 
 
 
@@ -55,6 +34,10 @@ public:
 	int is_empty()
 	{
 		return (head) ? 0 : 1;
+	}
+	double prev_top()
+	{
+		return arr[head - 2];
 	}
 };
 
@@ -184,6 +167,7 @@ int main()
 	char current_symbol;
 	current_symbol = cin.peek();
 	double number = 0;
+	int open = 0;
 	//cout << current_symbol;    print current symbol
 	// для стеков создадим свой заголовочный файл?
 
@@ -208,12 +192,14 @@ int main()
 
 		if (current_symbol == '(')
 		{
+			open++;
 			f = 1;
 			signs.push('(');
 			cin.ignore();
 		}
 		else if (current_symbol == ')')
 		{
+			open--;
 			f = 0;
 			while (signs.get_top() != -1000000000 && signs.get_top() != '(')
 			{
@@ -271,8 +257,13 @@ int main()
 		polish[a++] = signs.pop();
 		polish[a++] = ' ';
 	}
+	int flag_brackets = 0;
+	if (!open)
+		flag_brackets = 1;
 
 
+	if (!flag_brackets)
+		cout << "Error : Wrong Brackets input" << endl;
 	//cout << polish << endl;
 
 	double res = 0;
@@ -325,7 +316,7 @@ int main()
 				nums.push(res);
 				//cout << res << endl;
 			}
-			else
+			else if (flag_brackets)
 			{
 				switch (errors)
 				{
@@ -349,8 +340,5 @@ int main()
 
 		++i;
 	}
-	int flag_brackets = brackets(polish);
-	if (!flag_brackets)
-		cout << "Error : Wrong Brackets input" << endl;
 	if (flag_result && flag_brackets) cout << res << endl;
 }
