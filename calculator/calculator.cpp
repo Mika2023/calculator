@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <fstream>
 
 using namespace std;
 
@@ -34,6 +35,226 @@ public:
 	}
 };
 
+class Correct
+{
+	string expression;
+public:
+	Correct() : expression() {};
+	Correct(string exp) : expression(exp) {};
+	int is_cor_brackets()
+	{
+		int c = 0;
+		for (int i = 0; i < expression.length(); ++i)
+		{
+			if (expression[i] == '(') ++c;
+			else if (expression[i] == ')')
+			{
+				--c;
+				if (c < 0) return 0;
+			}
+		}
+		if (!c) return 1;
+		return 0;
+	}
+	void delete_spaces()
+	{
+		int start = expression.find(" ");
+		while (start != string::npos)
+		{
+			expression.erase(start, 1);
+			start = expression.find(" ");
+		}
+	}
+	void change_ctg()
+	{
+		int start = expression.find("ctg");
+		while (start != string::npos)
+		{
+			expression.replace(start,3,"C");
+			start = expression.find("ctg");
+		}
+	}
+	string get_expr() const
+	{
+		return expression;
+	}
+	void set_expr(string value)
+	{
+		expression = value;
+	}
+};
+
+
+
+struct Variable
+{
+	string name;
+	double value;
+};
+
+class ListVariable
+{
+	Variable* vars;
+	int size, max_size;
+public:
+	ListVariable(int s): vars(nullptr), size(0), max_size(s)
+	{
+		if (s > 0) vars = new Variable[max_size];
+	}
+	int is_empty()
+	{
+		return (size) ? 1 : 0;
+	}
+	int is_full()
+	{
+		return max_size == size;
+	}
+	void add(Variable f)
+	{
+		if (!is_full()) vars[size++] = f;
+	}
+	int find(string n)
+	{
+		for (int i = 0; i < size; ++i)
+		{
+			if (vars[i].name == n) return i;
+		}
+		return -1;
+	}
+	string repl(string expr, string name_var)
+	{
+		int i = find(name_var);
+		if (i != -1)
+		{
+			int start = expr.find(vars[i].name);
+			while (start != string::npos)
+			{
+				expr.replace(start, vars[i].name.length(), to_string(vars[i].value));
+				start = expr.find(vars[i].name);
+			}
+		}
+		return expr;
+	}
+	int get_size() const
+	{
+		return size;
+	}
+	Variable* get_vars() const
+	{
+		return vars;
+	}
+};
+ListVariable listV(10);
+class Function
+{
+	string name, argument;
+	Correct definition;
+public:
+	Function() : name(), argument(), definition() {};
+	Function(string n, string d, string a) : name(n), definition(d), argument(a) {};
+	int is_correct()
+	{
+		if (!definition.is_cor_brackets()) return 0;
+		definition.change_ctg();
+		definition.delete_spaces();
+		return 1;
+	}
+	string get_name() const
+	{
+		return name;
+	}
+	string get_arg() const
+	{
+		return argument;
+	}
+	string get_def() const
+	{
+		return definition.get_expr();
+	}
+	void set_def(string value)
+	{
+		definition.set_expr(value);
+	}
+	void replace_var()
+	{
+		string changed = definition.get_expr();
+		changed = listV.repl(changed, argument);
+		set_def(changed);
+	}
+};
+
+class ListFunction
+{
+	Function* funcs;
+	int size, max_size;
+public:
+	ListFunction(int s) : funcs(nullptr), size(0), max_size(s)
+	{
+		if (s > 0) funcs = new Function[max_size];
+	}
+	int is_empty()
+	{
+		return (size)? 1: 0;
+	}
+	int is_full()
+	{
+		return max_size == size;
+	}
+	void add(Function f)
+	{
+		if (!is_full())
+		{
+			f.is_correct();
+			funcs[size++] = f;
+		}
+	}
+	int find(string n)
+	{
+		for (int i = 0; i < size; ++i)
+		{
+			if (funcs[i].get_name() == n) return i;
+		}
+		return -1;
+	}
+	void replace_variable(string n)
+	{
+		int i = find(n);
+		if (i != -1)
+		{
+			int j = find(funcs[i].get_arg());
+			if (j == -1)
+			{
+				funcs[i].replace_var();
+				return;
+			}
+			replace_variable(funcs[i].get_arg());
+		}
+	}
+	string replace_function(string expr, string n)
+	{
+		int i = find(n);
+		if (i != -1)
+		{
+			replace_variable(n);
+			int start = expr.find(funcs[i].get_name());
+			while (start != string::npos)
+			{
+				expr.replace(start, funcs[i].get_name().length()+ funcs[i].get_arg().length()+2, "("+funcs[i].get_def()+")");
+				start = expr.find(funcs[i].get_name());
+			}
+		}
+		return expr;
+	}
+	int get_size() const
+	{
+		return size;
+	}
+	Function* get_funcs() const
+	{
+		return funcs;
+	}
+};
+ListFunction listF(10);
 int priority(char sign)
 {
 	switch (sign)
@@ -55,9 +276,64 @@ int priority(char sign)
 	}
 	return 0;
 }
+string re_write_file(ifstream& f)
+{
+	
+	string expr;
+		f >> expr;
+		Correct expression(expr);
+		if (!expression.is_cor_brackets()) return "";
+		expression.change_ctg();
+		expression.delete_spaces();
+		string name, def;
+		while (f >> name >> def)
+		{
+			if (name.find("(") == string::npos)
+			{
+				Variable item;
+				item.name = name;
+				item.value = stod(def);
+				listV.add(item);
+			}
+			else
+			{
+				string arg = name.substr(name.find("(") + 1, name.length() - name.find("(") - 2);
+				name = name.substr(0, name.find("("));
+				Function item(name, def, arg);
+				listF.add(item);
+			}
+		}
+		for (int i = 0; i < listF.get_size(); ++i)
+		{
+			expression = listF.replace_function(expression.get_expr(), listF.get_funcs()[i].get_name());
+		}
+		for (int i = 0; i < listV.get_size(); ++i)
+		{
+			expression = listV.repl(expression.get_expr(), listV.get_vars()[i].name);
+		}
+		//f << expression.get_expr()<<endl;
+		return expression.get_expr();
+	
+}
 
 int main()
 {
+	cout << "hello";
+	return 0;
+	ifstream fs;
+	fs.open("input.txt");
+	//C:\\Users\\yajul\\source\\repos\\calculator\\calculator
+	string r = re_write_file(fs);
+	fs.close();
+	ofstream fo;
+	fo.open("input.txt");
+	if (r=="")
+	{
+		cout << "Неправильный ввод" << endl;
+		return 0;
+	}
+	fo << r << endl;
+	fo.close();
 	char polish[1000] = { 0 };
 	int a = 0;
 	int f = 1;
