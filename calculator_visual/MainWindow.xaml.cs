@@ -249,6 +249,22 @@ namespace calculator_visual
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
+            List<Parameter> p = ((Param)par).paramlist.ItemsSource as List<Parameter>;
+            List<function> f = ((Function)funct).funclist.ItemsSource as List<function>;
+            foreach(Parameter pr in p)
+            {
+                if (pr!=null)
+                {
+                    if (!parameters.Any(s => s.name==pr.name)) parameters.Add(pr);
+                }
+            }
+            foreach (function pr in f)
+            {
+                if (pr!=null)
+                {
+                    if (!functions.Any(s => s.name==pr.name && s.definition==pr.definition)) functions.Add(pr);
+                }
+            }
             using (StreamWriter file = new StreamWriter(@"C:\Users\yajul\source\repos\calculator\calculator_visual\bin\Debug\input.txt", false))//C:\Users\yajul\source\repos\calculator\x64\Debug\
             {
                 file.WriteLine(Expr.Text);
@@ -259,12 +275,13 @@ namespace calculator_visual
                 foreach (Parameter par in parameters) file.WriteLine(par.name+" "+par.value.ToString());
                 file.Close();
             }
-            Process p = new Process();
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.FileName = @"C:\Users\yajul\source\repos\calculator\calculator_visual\bin\Debug\calculator.exe";//C:\\Users\\yajul\\source\\repos\\calculator\\x64\\Debug\\
-            p.Start();
-            p.WaitForExit();
+            Process proc = new Process();
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.FileName = @"C:\Users\yajul\source\repos\calculator\calculator_visual\bin\Debug\calculator.exe";//C:\\Users\\yajul\\source\\repos\\calculator\\x64\\Debug\\
+            proc.Start();
+            proc.WaitForExit();
             Expr.Text = "";
             using (StreamReader fil = new StreamReader(@"C:\Users\yajul\source\repos\calculator\calculator_visual\bin\Debug\output.txt", false))//C:\Users\yajul\source\repos\calculator\x64\Debug\
             {

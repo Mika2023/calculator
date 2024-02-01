@@ -328,13 +328,24 @@ public:
 		int i = find(n);
 		if (i != -1)
 		{
-			int j = find(funcs[i].get_arg());
+			int j = 0;
+			string ar;
+			try
+			{
+				ar = funcs[i].get_arg().substr(0, funcs[i].get_arg().find("("));
+				j = find(ar);
+			}
+			catch(...)
+			{
+				j = -1;
+			}
+
 			if (j == -1)
 			{
 				funcs[i].replace_var();
 				return;
 			}
-			replace_variable(funcs[i].get_arg());
+			replace_variable(ar);
 		}
 	}
 	string replace_function(string expr, string n)
@@ -432,14 +443,15 @@ int main()
 	fs.close();
 	ofstream fo;
 	fo.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\input.txt");
+	ofstream fil;
+	fil.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\output.txt");
 	if (r=="")
 	{
-		fo << "Неправильный ввод" << endl;
+		fil << "Неправильный ввод" << endl;
 		return 0;
 	}
 	fo << r << endl;
 	fo.close();
-	return 0;
 	ifstream file;
 	file.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\input.txt");
 	char polish[1000] = { 0 };
@@ -544,8 +556,7 @@ int main()
 	if (!open)
 		flag_brackets = 1;
 	file.close();
-	ofstream fil;
-	fil.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\output.txt");
+	
 	/*if (!flag_brackets)
 		cout << "Error : Wrong Brackets input" << endl;*/
 	//cout << polish << endl;

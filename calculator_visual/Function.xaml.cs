@@ -50,7 +50,7 @@ namespace calculator_visual
             if (NameFunc.Text != "" && TextFunc.Text!="")
             {
                 function item = new function() { name = NameFunc.Text, definition = TextFunc.Text };
-                if(!functions.Any(s=>s.name==item.name && s.definition==item.definition) && item.name.Contains("(x)"))functions.Add(item);
+                if(!functions.Any(s=>s.name==item.name && s.definition==item.definition) && item.name.Contains("(")&&item.name.Contains(")")) functions.Add(item);
                 funclist.Items.Refresh();
                 NameFunc.Text = "";
                 TextFunc.Text = "";
