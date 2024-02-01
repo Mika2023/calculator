@@ -1,0 +1,22 @@
+﻿<Page x:Class="calculator_visual.Cat"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:calculator_visual"
+      mc:Ignorable="d" 
+      d:DesignHeight="449.04" d:DesignWidth="385"
+      Title="Cat">
+
+    <Grid>
+        <Image HorizontalAlignment="Left" Height="326" Margin="46,0,0,0" VerticalAlignment="Top" Width="392" Source="/1614547415_29-p-kotenok-na-belom-fone-39.png"/>
+        <TextBlock HorizontalAlignment="Center" Margin="0,348,0,0" TextWrapping="Wrap" Text="Мы очень старались" Height="91" Width="334" FontFamily="Bahnschrift" Foreground="#FF2D1065" FontSize="30" TextAlignment="Center" VerticalAlignment="Top" Padding="0,30,0,0">
+            <TextBlock.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="6"/>
+                </Style>
+            </TextBlock.Resources>
+        </TextBlock>
+
+    </Grid>
+</Page>

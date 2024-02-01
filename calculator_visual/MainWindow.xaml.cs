@@ -24,6 +24,7 @@ namespace calculator_visual
     {
         Page funct;
         Page par;
+        Page cat;
         List<function> functions;
         List<Parameter> parameters;
         string Expression;
@@ -39,6 +40,13 @@ namespace calculator_visual
             get
             {
                 return par ?? (par = new Param());
+            }
+        }
+        Page Cat
+        {
+            get
+            {
+                return cat ?? (cat = new Cat());
             }
         }
         public MainWindow()
@@ -289,6 +297,11 @@ namespace calculator_visual
                 Expr.Text += output;
                 fil.Close();
             }
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            FrameMain.NavigationService.Navigate(Cat);
         }
 
         public void Click_brackets(object sender,RoutedEventArgs e)
