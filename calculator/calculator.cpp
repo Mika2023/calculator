@@ -635,7 +635,7 @@ int main()
 
 		++i;
 	}
-	if (flag_result && flag_brackets) cout << res << endl;
+	if (flag_result && flag_brackets) cout << nums.pop() << endl; //case then there is only one number in input file
 	fil.close();
 	return 0;
 }
