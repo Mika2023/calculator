@@ -6,6 +6,9 @@
 using namespace std;
 
 
+
+
+
 class Stack
 {
 	double arr[1000];
@@ -32,6 +35,104 @@ public:
 	int is_empty()
 	{
 		return (head) ? 0 : 1;
+	}
+	double prev_top()
+	{
+		return arr[head - 2];
+	}
+};
+
+class Maths
+{
+	double n1;
+	double n2;
+public:
+	Maths() :n1(0), n2(0) {};
+	Maths(char operator_, Stack* nums)
+	{
+		switch (operator_)
+		{
+		case 'l':
+		case '+':
+		case '-':
+		case '^':
+		case '*':
+		case '/':
+			n1 = (*nums).pop();
+			n2 = (*nums).pop();
+		//	cout << "pop:" << n1 << ' ' << n2 << endl;
+			break;
+		case 's':
+		case 'c':
+		case 'C':
+		case 't':
+			n1 = (*nums).pop();
+			break;
+		}
+	}
+	int CheckOperands(char operator_)const
+	{
+		switch (operator_)
+		{
+		case '/':
+			if (n1 == 0)
+				return 1;
+		case 'l':
+			if (n2 <= 0 || n1 <= 0 || n2 == 1)
+				return 2;
+		case 'C':
+			if (tan(n1) == 0)
+				return 3;
+		case '^':
+			if (!n2)
+			{
+				if (n1 < 0)
+					return 4;
+			}
+			else if (n1 - int(n1) > 0.0000001)
+				return 4;
+		}
+		return 0;
+	}
+	double Result(char operator_)
+	{
+		double res = 0;
+		switch (operator_)
+		{
+		case '+':
+			res = n1 + n2;
+			break;
+		case '-':
+			res = -(n1 - n2);
+			break;
+		case '^':
+			res = pow(n2, n1);
+			break;
+		case 's':
+			res = sin(n1);
+			break;
+		case 'c':
+			res = cos(n1);
+			break;
+		case 't':
+			res = tan(n1);
+			break;
+		case 'l':
+			res = log(n1) / log(n2); // логарифм по основанию b от числа a == натуральный логарифм (a) / натуральный логарифм (b). 
+			//Для вычисления логарифма нужно обработать два числа, log(x) вычисляет натуральный логарифм
+			break;
+		case '*':
+			res = n1 * n2;
+			break;
+		case '/':
+			res = n2 / n1;
+			break;
+		case 'C': //cot = C
+			res = 1 / tan(n1);
+			break;
+		}
+		//cout << "res:" << n1 << ' ' << n2 << ' ' << res << endl;
+		return(res);
 	}
 };
 
@@ -262,10 +363,10 @@ int priority(char sign)
 	case 's':
 	case 'c':
 	case 't':
-	case 'l':
 	case 'C'://котангенс обозначим как C, в вводе также вместо cot напишем C
 		return 4;
 	case '^':
+	case 'l':
 		return 3;
 	case '*':
 	case '/':
@@ -340,6 +441,7 @@ int main()
 	char current_symbol;
 	current_symbol = cin.peek();
 	double number = 0;
+	int open = 0;
 	//cout << current_symbol;    print current symbol
 	// для стеков создадим свой заголовочный файл?
 
@@ -350,7 +452,7 @@ int main()
 		{
 			cin >> number; //		TO DO: reading from the file
 			string stNumber = to_string(number); // convert to string; need to work with polish notation
-			int number_length = stNumber.length(); 
+			int number_length = stNumber.length();
 			int number_iterator = 0;
 			while (number_length)
 			{
@@ -364,12 +466,14 @@ int main()
 
 		if (current_symbol == '(')
 		{
+			open++;
 			f = 1;
 			signs.push('(');
 			cin.ignore();
 		}
 		else if (current_symbol == ')')
 		{
+			open--;
 			f = 0;
 			while (signs.get_top() != -1000000000 && signs.get_top() != '(')
 			{
@@ -401,52 +505,20 @@ int main()
 				f = 0;
 				continue;
 			}
-			if (current_symbol == 'l')
-			{
-				cin.ignore(); cin.ignore(); cin.ignore(); cin.ignore(); //skip l,o,g,(
-				double osn, ch = 0;
-				cin >> osn;
 
-				string stNumber = to_string(osn); // convert to string; need to work with polish notation
-				int number_length = stNumber.length();
-				int number_iterator = 0;
-				while (number_length)
-				{
-					polish[a++] = stNumber[number_iterator++];
-					number_length--;
-				}
-				polish[a++] = ' '; // separate from the next number
-
-
-				cin.ignore(); //skip ,
-				cin >> ch;
-
-				stNumber = to_string(ch); // convert to string; need to work with polish notation
-				number_length = stNumber.length();
-				number_iterator = 0;
-				while (number_length)
-				{
-					polish[a++] = stNumber[number_iterator++];
-					number_length--;
-				}
-				polish[a++] = ' '; // separate from the next number
-				f = 0;
-				cin.ignore();
-
-			}
 			int prior = priority(current_symbol); //		TO DO:  в строке: sin; мы считали s, определили приоритет, 
 			while (!signs.is_empty() && priority(signs.get_top()) >= prior && signs.get_top() != '(')
 			{
 				polish[a++] = signs.pop();
 				polish[a++] = ' ';
 			}
-			signs.push(current_symbol); // или priority вернет 0, и если (!priority) то символ не пушим
+			if (prior) signs.push(current_symbol); // или priority вернет 0, и если (!priority) то символ не пушим
 			if (!flag_ignored) // need to check; if we met "-", we already skipped the symbol
 			{
 				cin.ignore();
 				flag_ignored = 0;
 			}
-			if (current_symbol == 's' || current_symbol == 'c' || current_symbol == 't')
+			if (current_symbol == 's' || current_symbol == 'c' || current_symbol == 't' || current_symbol == 'l')
 			{
 				cin.ignore();
 				cin.ignore();
@@ -454,13 +526,27 @@ int main()
 		}
 	}
 
+	while (!signs.is_empty())
+	{
+		polish[a++] = signs.pop();
+		polish[a++] = ' ';
+	}
+	int flag_brackets = 0;
+	if (!open)
+		flag_brackets = 1;
+
+
+	if (!flag_brackets)
+		cout << "Error : Wrong Brackets input" << endl;
+	//cout << polish << endl;
 
 	double res = 0;
 	Stack nums;
 	int i = 0;
 	double n1 = 0;
 	double n2 = 0;
-	while (i < a)
+	int flag_result = 1;
+	while (i < a && flag_result)
 	{
 		if (polish[i] == ' ')
 		{
@@ -493,49 +579,40 @@ int main()
 			nums.push(num);
 			continue;
 		}
-		switch (polish[i])
-		{
-		case '+':
-			res = nums.pop() + nums.pop();
-			break;
-		case '-':
-			res = -(nums.pop() - nums.pop());
-			break;
-		case '^':
-			res = pow(nums.pop(), nums.pop());
-			break;
-		case 's':
-			res = sin(nums.pop());
-			break;
-		case 'c':
-			res = cos(nums.pop());
-			break;
-		case 't':
-			res = tan(nums.pop());
-			break;
-		case 'l':
-			n1 = nums.pop();
-			n2 = nums.pop(); // n2 - основание, n1 - число 
-			res = log(n1) / log(n2); // логарифм по основанию b от числа a == натуральный логарифм (a) / натуральный логарифм (b). 
-			//Для вычисления логарифма нужно обработать два числа, log(x) вычисляет натуральный логарифм
-			break;
-		case '*':
-			res = nums.pop() * nums.pop();
-			break;
-		case '/':
-			n1 = nums.pop();
-			n2 = nums.pop();
-			res = n2 / n1;
-			break;
-		case 'C': //cot = C
-			res = 1 / tan(nums.pop());
-			break;
 
+		if (priority(polish[i]))
+		{
+			Maths Math(polish[i], &nums);
+			int errors = Math.CheckOperands(polish[i]);
+			if (!errors)
+			{
+				res = Math.Result(polish[i]);
+				nums.push(res);
+				//cout << res << endl;
+			}
+			else if (flag_brackets)
+			{
+				switch (errors)
+				{
+				case 1:
+					cout << "Error : Division by zero" << endl;
+					break;
+				case 2:
+					cout << "Error : Wrong log data" << endl;
+					break;
+				case 3:
+					cout << "Error : Wrong cot data" << endl;
+					break;
+				case 4:
+					cout << "Error : Wrong ^ data" << endl;
+				}
+				flag_result = 0;
+			}
 		}
-		nums.push(res);
+
+
+
 		++i;
 	}
-
-
-	cout << res << endl;
+	if (flag_result && flag_brackets) cout << res << endl;
 }
