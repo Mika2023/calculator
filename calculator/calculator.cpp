@@ -318,8 +318,6 @@ string re_write_file(ifstream& f)
 
 int main()
 {
-	cout << "hello";
-	return 0;
 	ifstream fs;
 	fs.open("input.txt");
 	//C:\\Users\\yajul\\source\\repos\\calculator\\calculator

@@ -249,7 +249,7 @@ namespace calculator_visual
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            using (StreamWriter file = new StreamWriter(@"C:\Users\yajul\source\repos\calculator\calculator\input.txt", false))
+            using (StreamWriter file = new StreamWriter(@"C:\Users\yajul\source\repos\calculator\calculator_visual\bin\Debug\input.txt", false))//C:\Users\yajul\source\repos\calculator\x64\Debug\
             {
                 file.WriteLine(Expr.Text);
                 foreach(function t in functions)
@@ -257,11 +257,12 @@ namespace calculator_visual
                     file.WriteLine(t.name+" "+t.definition);
                 }
                 foreach (Parameter par in parameters) file.WriteLine(par.name+" "+par.value.ToString());
+                file.Close();
             }
             Process p = new Process();
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.FileName = "C:\\Users\\yajul\\source\\repos\\calculator\\x64\\Release\\calculator.exe";
+            p.StartInfo.FileName = @"C:\Users\yajul\source\repos\calculator\calculator_visual\bin\Debug\calculator.exe";//C:\\Users\\yajul\\source\\repos\\calculator\\x64\\Debug\\
             p.Start();
             string output = p.StandardOutput.ReadToEnd();
             p.WaitForExit();
