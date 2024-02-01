@@ -257,22 +257,39 @@ namespace calculator_visual
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            List<Parameter> p = ((Param)par).paramlist.ItemsSource as List<Parameter>;
-            List<function> f = ((Function)funct).funclist.ItemsSource as List<function>;
-            foreach(Parameter pr in p)
+            List<Parameter> p;
+            try
             {
-                if (pr!=null)
+                if (par!=null && ((Param)par).paramlist.HasItems)
                 {
-                    if (!parameters.Any(s => s.name==pr.name)) parameters.Add(pr);
+                    p = ((Param)par).paramlist.ItemsSource as List<Parameter>;
+                    foreach (Parameter pr in p)
+                    {
+                        if (pr!=null)
+                        {
+                            if (!parameters.Any(s => s.name==pr.name)) parameters.Add(pr);
+                        }
+                    }
                 }
             }
-            foreach (function pr in f)
+            catch(Exception ex) { }
+            List<function> f;
+            try
             {
-                if (pr!=null)
+                if (funct!=null && ((Function)funct).funclist.HasItems)
                 {
-                    if (!functions.Any(s => s.name==pr.name && s.definition==pr.definition)) functions.Add(pr);
+                    f = ((Function)funct).funclist.ItemsSource as List<function>;
+
+                    foreach (function pr in f)
+                    {
+                        if (pr!=null)
+                        {
+                            if (!functions.Any(s => s.name==pr.name && s.definition==pr.definition)) functions.Add(pr);
+                        }
+                    }
                 }
             }
+            catch(Exception ex) { }   
             using (StreamWriter file = new StreamWriter(@"C:\Users\yajul\source\repos\calculator\calculator_visual\bin\Debug\input.txt", false))//C:\Users\yajul\source\repos\calculator\x64\Debug\
             {
                 file.WriteLine(Expr.Text);

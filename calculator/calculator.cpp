@@ -77,12 +77,15 @@ public:
 		case '/':
 			if (n1 == 0)
 				return 1;
+			break;
 		case 'l':
 			if (n2 <= 0 || n1 <= 0 || n2 == 1)
 				return 2;
+			break;
 		case 'C':
 			if (tan(n1) == 0)
 				return 3;
+			break;
 		case '^':
 			if (!n2)
 			{
@@ -91,6 +94,7 @@ public:
 			}
 			else if (n1 - int(n1) > 0.0000001)
 				return 4;
+			break;
 		}
 		return 0;
 	}
@@ -586,7 +590,7 @@ int main()
 			nums.push(num);
 			continue;
 		}
-		else if (i + 1 < a && polish[i] == '-' && polish[i + 1] >= '0' && polish[i] <= '9') // negative number
+		else if (i + 1 < a && polish[i] == '-' && polish[i + 1] >= '0' && polish[i+1] <= '9') // negative number
 		{
 			i++; // skip the current "-". case "-" will be ignored
 			string numberPolish = "";
