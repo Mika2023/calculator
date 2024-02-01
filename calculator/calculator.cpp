@@ -5,8 +5,8 @@
 
 using namespace std;
 
-
-
+#define cin file
+#define cout fil
 
 
 class Stack
@@ -173,6 +173,12 @@ public:
 		{
 			expression.replace(start,3,"C");
 			start = expression.find("ctg");
+		}
+		start = expression.find("tg");
+		while (start != string::npos)
+		{
+			expression.replace(start, 2, "tan");
+			start = expression.find("tg");
 		}
 	}
 	string get_expr() const
@@ -420,19 +426,22 @@ string re_write_file(ifstream& f)
 int main()
 {
 	ifstream fs;
-	fs.open("input.txt");
-	//C:\\Users\\yajul\\source\\repos\\calculator\\calculator
+	fs.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\input.txt");
+	//C:\\Users\ \yajul\\source\\repos\\calculator\\calculator
 	string r = re_write_file(fs);
 	fs.close();
 	ofstream fo;
-	fo.open("input.txt");
+	fo.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\input.txt");
 	if (r=="")
 	{
-		cout << "Неправильный ввод" << endl;
+		fo << "Неправильный ввод" << endl;
 		return 0;
 	}
 	fo << r << endl;
 	fo.close();
+	return 0;
+	ifstream file;
+	file.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\input.txt");
 	char polish[1000] = { 0 };
 	int a = 0;
 	int f = 1;
@@ -445,7 +454,7 @@ int main()
 	//cout << current_symbol;    print current symbol
 	// для стеков создадим свой заголовочный файл?
 
-	while (cin.peek() != '\n')
+	while (!file.eof())
 	{
 		current_symbol = cin.peek();
 		if (current_symbol >= '0' && current_symbol <= '9') // read a number
@@ -534,10 +543,11 @@ int main()
 	int flag_brackets = 0;
 	if (!open)
 		flag_brackets = 1;
-
-
-	if (!flag_brackets)
-		cout << "Error : Wrong Brackets input" << endl;
+	file.close();
+	ofstream fil;
+	fil.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\output.txt");
+	/*if (!flag_brackets)
+		cout << "Error : Wrong Brackets input" << endl;*/
 	//cout << polish << endl;
 
 	double res = 0;
@@ -615,4 +625,6 @@ int main()
 		++i;
 	}
 	if (flag_result && flag_brackets) cout << res << endl;
+	fil.close();
+	return 0;
 }

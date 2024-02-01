@@ -264,10 +264,14 @@ namespace calculator_visual
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.FileName = @"C:\Users\yajul\source\repos\calculator\calculator_visual\bin\Debug\calculator.exe";//C:\\Users\\yajul\\source\\repos\\calculator\\x64\\Debug\\
             p.Start();
-            string output = p.StandardOutput.ReadToEnd();
             p.WaitForExit();
             Expr.Text = "";
-            Expr.Text+= output;
+            using (StreamReader fil = new StreamReader(@"C:\Users\yajul\source\repos\calculator\calculator_visual\bin\Debug\output.txt", false))//C:\Users\yajul\source\repos\calculator\x64\Debug\
+            {
+                string output = fil.ReadLine();
+                Expr.Text += output;
+                fil.Close();
+            }
         }
 
         public void Click_brackets(object sender,RoutedEventArgs e)
