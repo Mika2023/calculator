@@ -438,6 +438,15 @@ string re_write_file(ifstream& f)
 	
 }
 
+long double fact(int N)
+{
+	if (N < 0) // если пользователь ввел отрицательное число
+		return 0; // возвращаем ноль
+	if (N == 0) // если пользователь ввел ноль,
+		return 1; // возвращаем факториал от нуля - не удивляетесь, но это 1 =)
+	else // Во всех остальных случаях
+		return N * fact(N - 1); // делаем рекурсию.
+
 int main()
 {
 	ifstream fs;
@@ -511,6 +520,13 @@ int main()
 			}
 			cin.ignore();
 		}
+
+			else if (current_symbol == '!')
+{
+	polish[a++] = '!';
+	polish[a++] = ' ';
+	cin.ignore();
+}
 		else
 		{
 			if (current_symbol == '-' && f) // унарный минус
@@ -635,7 +651,19 @@ int main()
 			}
 		}
 
-
+else if (polish[i] == '!')
+{
+	double number_ = nums.pop();
+	if ((number_ > 0)&&(abs(number_ - round(number)) <= 0.00001))
+		nums.push(fact(round(number_)));
+	else if (number_ == 0)
+		nums.push(1);
+	else
+	{
+		cout << "Error : Wrong ! data" << endl;
+		return 0;
+	}
+}
 
 		++i;
 	}
