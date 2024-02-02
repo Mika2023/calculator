@@ -1,9 +1,7 @@
-#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 #include <iostream>
 #include <string>
 #include <cmath>
 #include <fstream>
-#include <experimental\filesystem>
 
 using namespace std;
 
@@ -440,26 +438,17 @@ string re_write_file(ifstream& f)
 	
 }
 
-void GetPath(string* input_path, string* output_path)
-{
-    *input_path = experimental::filesystem::canonical("input.txt").generic_string();
-    *output_path = experimental::filesystem::canonical("output.txt").generic_string();
-}
-
 int main()
 {
-	string input_path;
-	string output_path;
-	GetPath(&input_path, &output_path);
 	ifstream fs;
-	fs.open(input_path);
+	fs.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\input.txt");
 	//C:\\Users\ \yajul\\source\\repos\\calculator\\calculator
 	string r = re_write_file(fs);
 	fs.close();
 	ofstream fo;
-	fo.open(input_path);
+	fo.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\input.txt");
 	ofstream fil;
-	fil.open(output_path);
+	fil.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\output.txt");
 	if (r=="")
 	{
 		fil << "Неправильный ввод" << endl;
@@ -468,7 +457,7 @@ int main()
 	fo << r << endl;
 	fo.close();
 	ifstream file;
-	file.open(input_path);
+	file.open("C:\\Users\\yajul\\source\\repos\\calculator\\calculator_visual\\bin\\Debug\\input.txt");
 	char polish[1000] = { 0 };
 	int a = 0;
 	int f = 1;
@@ -479,6 +468,7 @@ int main()
 	double number = 0;
 	int open = 0;
 	//cout << current_symbol;    print current symbol
+	// для стеков создадим свой заголовочный файл?
 
 	while (!file.eof())
 	{
